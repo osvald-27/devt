@@ -1,71 +1,80 @@
 const express = require("express");
-const router = express.Router();
-const db = require("./db");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const db = require("./db");
+const authMiddleware = require("./authMiddleware");
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const router = express.Router();
 
-// REGISTER
-router.post("/register", (req, res) => {
-  const { name, email, password } = req.body;
+/* REGISTER */
+router.post("/register", async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) return res.status(400).json({ error: "Email and password required" });
 
-  if (!name || !email || !password) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
+  const hash = await bcrypt.hash(password, 10);
 
-  const checkUser = "SELECT * FROM users WHERE email = ?";
-  db.query(checkUser, [email], async (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-
-    if (results.length > 0) {
-      return res.status(409).json({ error: "User exists" });
+  db.query(
+    "INSERT INTO users (email, password_hash) VALUES (?, ?)",
+    [email, hash],
+    err => {
+      if (err) return res.status(400).json({ error: "User exists" });
+      res.json({ message: "Registered" });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const insertUser =
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-    db.query(insertUser, [name, email, hashedPassword], (err2, results2) => {
-      if (err2) return res.status(500).json({ error: "Database insert error" });
-      res.status(201).json({ message: "User created successfully" });
-    });
-  });
+  );
 });
 
-// LOGIN
+/* LOGIN */
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) return res.status(400).json({ error: "Email and password required" });
 
-  if (!email || !password)
-    return res.status(400).json({ error: "All fields are required" });
+  db.query("SELECT * FROM users WHERE email = ? AND deleted_at IS NULL", [email], async (err, users) => {
+    if (!users.length) return res.status(401).json({ error: "Invalid credentials" });
 
-  const findUser = "SELECT * FROM users WHERE email = ?";
-  db.query(findUser, [email], async (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
+    const user = users[0];
+    const match = await bcrypt.compare(password, user.password_hash);
+    if (!match) return res.status(401).json({ error: "Invalid credentials" });
 
-    if (results.length === 0)
-      return res.status(404).json({ error: "User not found" });
+    const accessToken = jwt.sign({ id: user.id, email }, process.env.JWT_SECRET, { expiresIn: "15m" });
+    const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 
-    const user = results[0];
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: "Incorrect password" });
+    db.query("INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))", [user.id, refreshToken]);
 
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "1h",
+    res.json({ accessToken, refreshToken });
+  });
+});
+
+/* REFRESH TOKEN */
+router.post("/refresh", (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.sendStatus(403);
+
+  db.query("SELECT * FROM refresh_tokens WHERE token = ?", [refreshToken], (err, tokens) => {
+    if (!tokens.length) return res.sendStatus(403);
+
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
+      if (err) return res.sendStatus(403);
+      const newAccess = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "15m" });
+      res.json({ accessToken: newAccess });
     });
-
-    res.json({ message: "Login successful", token });
   });
 });
 
-module.exports = router
-
-// DB status endpoint for quick connection testing
-router.get('/db-status', (req, res) => {
-  const testSql = 'SELECT 1 + 1 AS result';
-  db.query(testSql, (err, results) => {
-    if (err) return res.status(500).json({ ok: false, error: err.message });
-    return res.json({ ok: true, result: results[0] });
-  });
+/* CURRENT USER */
+router.get("/me", authMiddleware, (req, res) => {
+  res.json(req.user);
 });
+
+/* LOGOUT */
+router.post("/logout", (req, res) => {
+  db.query("DELETE FROM refresh_tokens WHERE token = ?", [req.body.refreshToken]);
+  res.json({ message: "Logged out" });
+});
+
+/* SOFT DELETE */
+router.delete("/delete", authMiddleware, (req, res) => {
+  db.query("UPDATE users SET deleted_at = NOW() WHERE id = ?", [req.user.id]);
+  res.json({ message: "Account deleted" });
+});
+
+module.exports = router;
