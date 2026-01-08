@@ -8,14 +8,14 @@ const router = express.Router();
 
 /* REGISTER */
 router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ error: "Email and password required" });
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) return res.status(400).json({ error: "Name, email, and password required" });
 
   const hash = await bcrypt.hash(password, 10);
 
   db.query(
-    "INSERT INTO users (email, password_hash) VALUES (?, ?)",
-    [email, hash],
+    "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+    [name, email, hash],
     err => {
       if (err) return res.status(400).json({ error: "User exists" });
       res.json({ message: "Registered" });

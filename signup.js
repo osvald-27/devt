@@ -1,9 +1,10 @@
 
 document.getElementById("signupBtn").addEventListener("click", async () => {
-  const email = document.getElementById("email").value;
+  const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  if (!email || !password) {
+  if (!name || !email || !password) {
     document.getElementById("output").innerText = "Email and password required";
     return;
   }
@@ -17,7 +18,7 @@ document.getElementById("signupBtn").addEventListener("click", async () => {
     const res = await fetch("http://localhost:3000/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ name, email, password })
     });
 
     const data = await res.json();
@@ -25,7 +26,7 @@ document.getElementById("signupBtn").addEventListener("click", async () => {
     if (res.ok) {
       document.getElementById("output").innerText = "Registration successful! Redirecting to login...";
       setTimeout(() => {
-        window.location.href = "index.html";
+        window.location.href = "dashboard.html";
       }, 2000);
     } else {
       document.getElementById("output").innerText = data.error || "Sign Up failed";
