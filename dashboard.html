@@ -1,121 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Master Dashboard</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Elite Master Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <div class="app-shell">
-        <header>
-            <div class="header-container">
-                <div class="icon-box" onclick="goHome()">
-                    <span class="material-symbols-rounded" id="header-icon">notifications</span>
-                    <div class="pulse"></div>
-                </div>
-                <h2 id="view-title">Dashboard</h2>
-                <div class="icon-box"><span class="material-symbols-rounded">calendar_month</span></div>
-            </div>
-        </header>
+<div class="app-shell">
 
-        <main class="content-area">
-            <section id="home-view" class="view active">
-                <div class="hero">
-                    <h1>HEY! <span>SIMON</span></h1>
-                    <p>Ready for <b>Day #12</b>? Small steps lead to big changes.</p>
-                </div>
-                
-                <div class="responsive-grid">
-                    <div class="stat-card">
-                        <span class="card-tag">Finished</span>
-                        <div class="card-info">
-                            <div class="icon-circle green"><span class="material-symbols-rounded">check_circle</span></div>
-                            <h2>58</h2>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="card-tag">Balance</span>
-                        <div class="card-info">
-                            <div class="icon-circle yellow"><span class="material-symbols-rounded">database</span></div>
-                            <h2>2,874</h2>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="card-tag">Global</span>
-                        <div class="card-info">
-                            <div class="icon-circle purple"><span class="material-symbols-rounded">emoji_events</span></div>
-                            <h2>#80</h2>
-                        </div>
-                    </div>
-                    <a href="javascript:void(0)" class="cta-card" onclick="switchTab('quizzes')">
-                        <span class="label">PRACTICE</span>
-                        <span class="title">START QUIZ</span>
-                        <span class="material-symbols-rounded">rocket_launch</span>
-                    </a>
-                </div>
-            </section>
+<header>
+<div class="header-container">
+<div class="icon-box" onclick="goHome()">
+<span class="material-symbols-rounded" id="header-icon">notifications</span>
+<div class="pulse"></div>
+</div>
 
-            <section id="profile-view" class="view">
-                <div class="profile-card">
-                    <div class="profile-banner"></div>
-                    <div class="profile-content">
-                        <div class="avatar-wrapper">
-                            <img src="https://via.placeholder.com/150" id="user-photo">
-                            <label for="photo-upload" class="upload-btn"><span class="material-symbols-rounded">photo_camera</span></label>
-                            <input type="file" id="photo-upload" hidden onchange="loadPhoto(event)">
-                        </div>
-                        <div class="profile-text">
-                            <h2>Simon Peter</h2>
-                            <p>Level 14 Polymath • Daily Learner</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+<h2 id="view-title">Dashboard</h2>
 
-            <section id="quizzes-view" class="view">
-                <div class="responsive-grid">
-                    <div class="list-card">
-                        <div class="icon-circle blue-bg"><span class="material-symbols-rounded">science</span></div>
-                        <div class="list-text"><strong>Science</strong><p>15 Questions</p></div>
-                    </div>
-                    <div class="list-card">
-                        <div class="icon-circle orange-bg"><span class="material-symbols-rounded">history_edu</span></div>
-                        <div class="list-text"><strong>History</strong><p>12 Questions</p></div>
-                    </div>
-                </div>
-            </section>
-        </main>
+<div class="icon-box" id="logoutBtn">
+<span class="material-symbols-rounded">logout</span>
+</div>
+</div>
+</header>
 
-        <nav class="bottom-nav">
-            <div class="nav-container">
-                <a href="javascript:void(0)" class="nav-link active" onclick="switchTab('home')">
-                    <span class="material-symbols-rounded">home</span>
-                    <span>HOME</span>
-                </a>
-                <a href="javascript:void(0)" class="nav-link" onclick="switchTab('quizzes')">
-                    <span class="material-symbols-rounded">quiz</span>
-                    <span>QUIZZES</span>
-                </a>
-                <a href="javascript:void(0)" class="nav-link" onclick="switchTab('social')">
-                    <span class="material-symbols-rounded">forum</span>
-                    <span>SOCIAL</span>
-                </a>
-                <a href="javascript:void(0)" class="nav-link" onclick="switchTab('profile')">
-                    <span class="material-symbols-rounded">person</span>
-                    <span>PROFILE</span>
-                </a>
-                <a href="javascript:void(0)" class="nav-link" onclick="switchTab('settings')">
-                    <span class="material-symbols-rounded">settings</span>
-                    <span>SETUP</span>
-                </a>
-            </div>
-        </nav>
-    </div>
+<main class="content-area">
 
-    <script src="script.js"></script>
+<section id="home-view" class="view active">
+<div class="hero">
+<h1>HEY! <span id="userName">USER</span></h1>
+<p>Ready for <b>Day #12</b>? Small steps lead to big changes.</p>
+</div>
+
+<div class="responsive-grid">
+
+<div class="stat-card">
+<span class="card-tag">Finished</span>
+<div class="card-info">
+<div class="icon-circle green"><span class="material-symbols-rounded">check_circle</span></div>
+<h2>58</h2>
+</div>
+</div>
+
+<div class="stat-card">
+<span class="card-tag">Balance</span>
+<div class="card-info">
+<div class="icon-circle yellow"><span class="material-symbols-rounded">database</span></div>
+<h2>2,874</h2>
+</div>
+</div>
+
+<div class="stat-card">
+<span class="card-tag">Global</span>
+<div class="card-info">
+<div class="icon-circle purple"><span class="material-symbols-rounded">emoji_events</span></div>
+<h2>#80</h2>
+</div>
+</div>
+
+<a href="#" class="cta-card" onclick="switchTab('quizzes')">
+<span class="label">PRACTICE</span>
+<span class="title">START QUIZ</span>
+<span class="material-symbols-rounded">rocket_launch</span>
+</a>
+
+</div>
+</section>
+
+
+<section id="profile-view" class="view">
+<div class="profile-card">
+<div class="profile-banner"></div>
+
+<div class="profile-content">
+<div class="avatar-wrapper">
+<img src="https://via.placeholder.com/150" id="user-photo">
+
+<label for="photo-upload" class="upload-btn">
+<span class="material-symbols-rounded">photo_camera</span>
+</label>
+
+<input type="file" id="photo-upload" hidden onchange="loadPhoto(event)">
+</div>
+
+<div class="profile-text">
+<h2 id="profileEmail">email</h2>
+<p>Level 14 Polymath • Daily Learner</p>
+
+<button id="deleteBtn" class="btn-primary">DELETE ACCOUNT</button>
+</div>
+</div>
+</div>
+</section>
+
+
+<section id="quizzes-view" class="view">
+<div class="responsive-grid">
+
+<div class="list-card">
+<div class="icon-circle blue-bg">
+<span class="material-symbols-rounded">science</span>
+</div>
+<div class="list-text">
+<strong>Science</strong>
+<p>15 Questions</p>
+</div>
+</div>
+
+<div class="list-card">
+<div class="icon-circle orange-bg">
+<span class="material-symbols-rounded">history_edu</span>
+</div>
+<div class="list-text">
+<strong>History</strong>
+<p>12 Questions</p>
+</div>
+</div>
+
+</div>
+</section>
+
+</main>
+
+
+<nav class="bottom-nav">
+<div class="nav-container">
+
+<a href="#" class="nav-link active" onclick="switchTab('home')">
+<span class="material-symbols-rounded">home</span>
+<span>HOME</span>
+</a>
+
+<a href="#" class="nav-link" onclick="switchTab('quizzes')">
+<span class="material-symbols-rounded">quiz</span>
+<span>QUIZZES</span>
+</a>
+
+<a href="#" class="nav-link" onclick="switchTab('social')">
+<span class="material-symbols-rounded">forum</span>
+<span>SOCIAL</span>
+</a>
+
+<a href="#" class="nav-link" onclick="switchTab('profile')">
+<span class="material-symbols-rounded">person</span>
+<span>PROFILE</span>
+</a>
+
+</div>
+</nav>
+
+</div>
+
+<script src="dashboard.js"></script>
 </body>
 </html>
+

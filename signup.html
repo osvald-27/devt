@@ -1,39 +1,57 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up | Elite Master</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="auth-page">
-        <div class="auth-card">
-            <div class="auth-info">
-                <h1>JOIN<span>ELITE</span></h1>
-                <p>Create your account and start mastering new skills today.</p>
-            </div>
-            <div class="auth-form">
-                <h2>Create Account</h2>
-                <div class="input-box">
-                    <span class="material-symbols-rounded">person</span>
-                    <input type="text" id="sign-name" placeholder="Full Name" required>
-                </div>
-                <div class="input-box">
-                    <span class="material-symbols-rounded">mail</span>
-                    <input type="email" id="sign-email" placeholder="Email Address" required>
-                </div>
-                <div class="input-box">
-                    <span class="material-symbols-rounded">lock</span>
-                    <input type="password" id="sign-pass" placeholder="Create Password" required>
-                </div>
-                <button class="btn-primary" onclick="handleSignup()">Create Account</button>
-                <p class="switch-text">Already a member? <a href="index.html">Log In</a></p>
-            </div>
+
+<div class="auth-page">
+    <div class="auth-card">
+
+        <div class="auth-info">
+            <h1>JOIN<span>ELITE</span></h1>
+            <p>Create your account and start mastering new skills today.</p>
         </div>
+
+        <div class="auth-form">
+            <h2>Create Account</h2>
+
+            <div class="input-box">
+                <span class="material-symbols-rounded">person</span>
+                <input type="text" id="name" placeholder="Full Name">
+            </div>
+
+            <div class="input-box">
+                <span class="material-symbols-rounded">mail</span>
+                <input type="email" id="email" placeholder="Email Address">
+            </div>
+
+            <div class="input-box">
+                <span class="material-symbols-rounded">lock</span>
+                <input type="password" id="password" placeholder="Create Password">
+            </div>
+
+            <button class="btn-primary" id="signupBtn">Create Account</button>
+
+            <p id="output"></p>
+
+            <p class="switch-text">
+                Already a member? <a href="index.html">Log In</a>
+            </p>
+        </div>
+
     </div>
-    <script src="script.js"></script>
+</div>
+
+<script src="signup.js"></script>
 </body>
 </html>
+
+
