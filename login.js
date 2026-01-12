@@ -10,7 +10,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   }
 
   try {
-    const res = await fetch("http://gilla-ekati.versel.app/api/auth/login", {
+    const res = await fetch("https://gilla-ekati.versel.app/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
