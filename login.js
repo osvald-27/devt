@@ -2,13 +2,15 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
+  document.getElementsByClassName("index")
+
   if (!email || !password) {
     document.getElementById("output").innerText = "Fill all fields";
     return;
   }
 
   try {
-    const res = await fetch("http://192.168.56.1:3000/api/auth/login", {
+    const res = await fetch("http://gilla-ekati.versel.app/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
@@ -28,4 +30,12 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   } catch {
     document.getElementById("output").innerText = "Server not running";
   }
+
+  fetch("https://gilla-ekati.versel.app/api/auth/login", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+
 });

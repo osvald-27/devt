@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("./db");
 const authMiddleware = require("./authMiddleware");
-
 const router = express.Router();
 
 /* REGISTER */
@@ -41,6 +40,12 @@ router.post("/login", (req, res) => {
     db.query("INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))", [user.id, refreshToken]);
 
     res.json({ accessToken, refreshToken });
+    res.cookie("token", accessToken, { 
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    });
   });
 });
 

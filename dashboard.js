@@ -36,7 +36,7 @@ if(saved) document.getElementById("user-photo").src=saved;
 
 /* AUTH CHECK */
 (async()=>{
-const res = await authFetch("http://localhost:3000/api/auth/me");
+const res = await authFetch("http://gilla-ekati.versel.app/api/auth/me");
 
 if(!res.ok){
 localStorage.clear();
@@ -71,7 +71,7 @@ if(!ok) return;
 const password = prompt("Enter password");
 if(!password) return;
 
-await authFetch("http://192.168.56.1:3000/api/auth/delete",{
+await authFetch("http://gilla-ekati.versel.app/api/auth/delete",{
 method:"DELETE",
 body:JSON.stringify({password})
 });

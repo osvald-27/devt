@@ -16,7 +16,7 @@ export async function authFetch(url, options = {}) {
     const refreshToken = localStorage.getItem("refreshToken");
 
     const refreshRes = await fetch(
-      "http://192.168.56.1:3000/api/auth/refresh",
+      "http://gilla-ekati.versel.app/api/auth/refresh",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,8 +35,6 @@ export async function authFetch(url, options = {}) {
 
   return res;
 }
-
-
 
 
 
