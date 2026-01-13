@@ -15,7 +15,7 @@ export async function authFetch(url, options = {}) {
 
     const refreshToken = localStorage.getItem("refreshToken");
 
-    const refreshRes = await fetch( "https://gilla-ekati.versel.app/api/auth/refresh",
+    const refreshRes = await fetch( "https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/refresh",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

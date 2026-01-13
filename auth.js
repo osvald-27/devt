@@ -82,4 +82,16 @@ router.delete("/delete", authMiddleware, (req, res) => {
   res.json({ message: "Account deleted" });
 });
 
+/*Test of api*/
+router.get("/test", (req, res) => {
+   const h = "Niemann@gmail.com"
+
+  db.query("SELECT * FROM users WHERE email = ? AND deleted_at IS NULL", [h], async (err, users) => {
+    if (!users.length) return res.status(401).json({ error: "Invalid credentials" });
+
+    res.json({ message: "This works fam" });
+    console.log("This works fam")
+  });
+});
+
 module.exports = router;

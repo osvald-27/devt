@@ -2,9 +2,17 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./auth");
+const bodyParser = require("body-parser");
 
 const app = express();
 app.use(express.json());
+app.use(cors({
+    origin: "*", 
+    credentials: true
+}));
+app.use(bodyParser.json())
+
+app.use("/api/auth", authRoutes);
 
 const rateLimit = require("express-rate-limit");
 const loginLimiter = rateLimit({
@@ -19,17 +27,15 @@ const regLimiter = rateLimit({
 });
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
-app.use(cors({
-    origin: "https://osvald-27.github.io/devt", 
-    credentials: true
-}));
+
 
 app.use("/api/auth/login", loginLimiter);
 app.use("/api/auth/register", regLimiter);
 
 
-app.use("/api/auth", authRoutes);
-
 const PORT = process.env.PORT || 3000;
 
-module.exports = app;
+app.listen(PORT, "0.0.0.0", () => {
+    console.log("Server running on port", PORT);
+});
+ module.exports = app;

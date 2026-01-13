@@ -10,7 +10,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   }
 
   try {
-    const res = await fetch("https://gilla-ekati.versel.app/api/auth/login", {
+    const res = await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
@@ -31,7 +31,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
     document.getElementById("output").innerText = "Server not running";
   }
 
-  fetch("https://gilla-ekati.versel.app/api/auth/login", {
+  fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/login", {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },

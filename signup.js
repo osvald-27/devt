@@ -13,7 +13,7 @@ document.getElementById("signupBtn").addEventListener("click", async () => {
   }
 
   try {
-    const res = await fetch("https://gilla-ekati.versel.app/api/auth/register", {
+    const res = await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password })

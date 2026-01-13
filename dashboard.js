@@ -36,7 +36,7 @@ if(saved) document.getElementById("user-photo").src=saved;
 
 /* AUTH CHECK */
 (async()=>{
-const res = await authFetch("http://gilla-ekati.versel.app/api/auth/me");
+const res = await authFetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/me");
 
 if(!res.ok){
 localStorage.clear();
@@ -52,7 +52,7 @@ document.getElementById("profileEmail").innerText = user.email;
 
 /* LOGOUT */
 document.getElementById("logoutBtn").onclick=async()=>{
-await fetch("http://192.168.56.1:3000/api/auth/logout",{
+await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/logout",{
 method:"POST",
 headers:{ "Content-Type":"application/json"},
 body:JSON.stringify({ refreshToken:localStorage.getItem("refreshToken") })
@@ -71,7 +71,7 @@ if(!ok) return;
 const password = prompt("Enter password");
 if(!password) return;
 
-await authFetch("http://gilla-ekati.versel.app/api/auth/delete",{
+await authFetch ("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/delete",{
 method:"DELETE",
 body:JSON.stringify({password})
 });
