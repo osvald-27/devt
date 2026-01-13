@@ -6,6 +6,7 @@ const passwordInput = document.getElementById("password");
 const output = document.getElementById("output");
 
 signupBtn.addEventListener("click", async () => {
+  output = "";
   const name = nameInput.value;
   const email = emailInput.value;
   const password = passwordInput.value;

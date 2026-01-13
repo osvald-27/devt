@@ -6,6 +6,7 @@ const output = document.getElementById("output");
 
 // Standard Login
 loginBtn.addEventListener("click", async () => {
+  output = "";
   const email = emailInput.value;
   const password = passwordInput.value;
 
