@@ -5,8 +5,12 @@ const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const output = document.getElementById("output");
 
+nameInput.addEventListener("input", () => output.innerText = "");
+emailInput.addEventListener("input", () => output.innerText = "");
+passwordInput.addEventListener("input", () => output.innerText = "");
+
 signupBtn.addEventListener("click", async () => {
-  output = "";
+  
   const name = nameInput.value;
   const email = emailInput.value;
   const password = passwordInput.value;
