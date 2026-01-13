@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./auth");
 const bodyParser = require("body-parser");
+const requestLogger = require("./logger");
 
 const app = express();
 app.use(express.json());
@@ -10,7 +11,8 @@ app.use(cors({
     origin: "*", 
     credentials: true
 }));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+app.use(requestLogger);
 
 app.use("/api/auth", authRoutes);
 

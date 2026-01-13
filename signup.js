@@ -1,16 +1,15 @@
+const registerForm = document.getElementById("authForm");
+const output = document.getElementById("output");
 
 
+registerForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  output.innerText = "";
 
-document.getElementById("signupBtn").addEventListener("click", async () => {
+  const name = registerForm.name.value;
+  const email = registerForm.email.value;
+  const password = registerForm.password.value;
 
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  if (!name || !email || !password) {
-    output.innerText = "Fill all fields";
-    return;
-  }
 
   try {
     const res = await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/register", {
