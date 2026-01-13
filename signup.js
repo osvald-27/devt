@@ -5,8 +5,7 @@ const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const output = document.getElementById("output");
 
-nameInput.addEventListener("input", () => output.innerText = "");
-emailInput.addEventListener("input", () => output.innerText = "");
+
 passwordInput.addEventListener("input", () => output.innerText = "");
 
 signupBtn.addEventListener("click", async () => {
@@ -39,3 +38,6 @@ signupBtn.addEventListener("click", async () => {
     output.innerText = "Server offline";
   }
 });
+
+// Clear error on typing
+[emailInput, passwordInput].forEach(el => el.addEventListener("input", () => output.innerText = ""));

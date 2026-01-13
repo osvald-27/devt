@@ -4,10 +4,6 @@ const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const output = document.getElementById("output");
 
-// Clear error on typing
-nameInput.addEventListener("input", () => output.innerText = "");
-emailInput.addEventListener("input", () => output.innerText = "");
-
 // Standard Login
 loginBtn.addEventListener("click", async () => {
   output = "";
@@ -39,6 +35,9 @@ loginBtn.addEventListener("click", async () => {
     output.innerText = "Server not running";
   }
 });
+
+// Clear error on typing
+[emailInput, passwordInput].forEach(el => el.addEventListener("input", () => output.innerText = ""));
 
 // Google redirect tokens
 window.onload = () => {
