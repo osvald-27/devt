@@ -1,103 +1,129 @@
-const express = require("express");
+const router = require("express").Router();
+const passport = require("passport");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const db = require("./db");
 const authMiddleware = require("./authMiddleware");
-const router = express.Router();
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const db = require("./db"); // Your MySQL connection
 
-// Helpers
-function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
+// --- GOOGLE STRATEGY SETUP ---
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // Check if user exists
+        const email = profile.emails[0].value;
+        const name = profile.displayName;
+        db.query("SELECT * FROM users WHERE email = ?", [email], (err, users) => {
+          if (err) return done(err, null);
 
-function validatePassword(password) {
-  // At least 8 chars, 1 uppercase, 1 lowercase, 1 number
-  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
-}
+          if (users.length) {
+            // User exists
+            return done(null, users[0]);
+          } else {
+            // Create new user
+            db.query(
+              "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+              [name, email, null], // password null for Google users
+              (err2, result) => {
+                if (err2) return done(err2, null);
+                return done(null, { name, email });
+              }
+            );
+          }
+        });
+      } catch (err) {
+        return done(err, null);
+      }
+    }
+  )
+);
 
-/* REGISTER */
+// --- ROUTES ---
+
+// Standard Register
 router.post("/register", async (req, res) => {
-  let { name, email, password } = req.body;
+  const { name, email, password } = req.body;
+  if (!name || !email || !password)
+    return res.status(400).json({ error: "Name, email, and password required" });
 
-  // reset output
-  let output = "";
-
-  // 1️⃣ Validate input
-  if (!name || !email || !password) {
-    output = "Name, email, and password required";
-    return res.status(400).json({ output });
-  }
-
-  if (!validateEmail(email)) {
-    output = "Invalid email format";
-    return res.status(400).json({ output });
-  }
-
-  if (!validatePassword(password)) {
-    output =
-      "Password must be at least 8 characters, with uppercase, lowercase, and number";
-    return res.status(400).json({ output });
-  }
-
-  try {
-    const hash = await bcrypt.hash(password, 10);
-
-    db.query(
-      "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
-      [name, email, hash],
-      (err) => {
-        if (err) {
-          output = "User exists";
-          return res.status(400).json({ output });
-        }
-        res.json({ message: "Registered", output: "" });
-      }
-    );
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ output: "Server error" });
-  }
-});
-
-/* LOGIN */
-router.post("/login", (req, res) => {
-  const { email, password } = req.body;
-
-  // reset output
-  let output = "";
-
-  if (!email || !password) {
-    output = "Email and password required";
-    return res.status(400).json({ output });
-  }
-
+  const hash = await bcrypt.hash(password, 10);
   db.query(
-    "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL",
-    [email],
-    async (err, users) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ output: "Server error" });
-      }
-
-      if (!users.length) {
-        output = "Invalid credentials";
-        return res.status(401).json({ output });
-      }
-
-      const user = users[0];
-      const valid = await bcrypt.compare(password, user.password_hash);
-
-      if (!valid) {
-        output = "Invalid credentials";
-        return res.status(401).json({ output });
-      }
-
-      // TODO: Generate JWT or session here
-      res.json({ message: "Logged in", output: "" });
+    "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+    [name, email, hash],
+    (err) => {
+      if (err) return res.status(400).json({ error: "User exists" });
+      res.status(201).json({ message: "User registered" });
     }
   );
 });
+
+// Standard Login
+router.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password)
+    return res.status(400).json({ error: "Email and password required" });
+
+  db.query("SELECT * FROM users WHERE email = ? AND deleted_at IS NULL", [email], async (err, users) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (!users.length) return res.status(401).json({ error: "Invalid credentials" });
+
+    const user = users[0];
+
+    // Google users may not have a password
+    if (!user.password_hash)
+      return res.status(403).json({ error: "Use Google Login" });
+
+    const valid = await bcrypt.compare(password, user.password_hash);
+    if (!valid) return res.status(401).json({ error: "Invalid credentials" });
+
+    const accessToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const refreshToken = jwt.sign({ email }, process.env.JWT_REFRESH_SECRET);
+    res.json({ accessToken, refreshToken });
+  });
+});
+
+// Google Auth Trigger
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+// Google Callback
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    const accessToken = jwt.sign({ email: req.user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const refreshToken = jwt.sign({ email: req.user.email }, process.env.JWT_REFRESH_SECRET);
+
+    // Redirect to frontend with tokens
+    res.redirect(`https://your-frontend-url.com/dashboard.html?token=${accessToken}&refresh=${refreshToken}`);
+  }
+);
+
+// Refresh access token
+router.post("/refresh", (req, res) => {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(400).json({ error: "Refresh token required" });
+
+    try {
+        // Verify refresh token
+        const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+        // Issue new access token
+        const newAccessToken = jwt.sign({ email: payload.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+        res.json({ accessToken: newAccessToken });
+    } catch (err) {
+        res.status(401).json({ error: "Invalid or expired refresh token" });
+    }
+});
+
+
++
 
 
 /* LOGOUT */
@@ -112,16 +138,5 @@ router.delete("/delete", authMiddleware, (req, res) => {
   res.json({ message: "Account deleted" });
 });
 
-/*Test of api*/
-router.get("/test", (req, res) => {
-   const h = "Niemann@gmail.com"
-
-  db.query("SELECT * FROM users WHERE email = ? AND deleted_at IS NULL", [h], async (err, users) => {
-    if (!users.length) return res.status(401).json({ error: "Invalid credentials" });
-
-    res.json({ message: "This works fam" });
-    console.log("This works fam")
-  });
-});
 
 module.exports = router;

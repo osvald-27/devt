@@ -1,49 +1,76 @@
+
 const loginBtn = document.getElementById("loginBtn");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const output = document.getElementById("output");
 
+// Standard Login
+loginBtn.addEventListener("click", async () => {
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
-loginBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
-    output.innerText = "";
+  if (!email || !password) {
+    output.innerText = "Please fill in all fields";
+    return;
+  }
 
+  try {
+    const res = await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
+    const data = await res.json();
 
-
-    if (!email || !password) {
-        output.innerText = "Please enter email and password";
-        return;
+    if (res.ok) {
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      window.location.href = "dashboard.html";
+    } else {
+      output.innerText = data.error || "Login failed";
     }
-
-
-    try {
-        const res = await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
-
-
-        const data = await res.json();
-
-
-        if (res.ok) {
-            localStorage.setItem("accessToken", data.accessToken);
-            localStorage.setItem("refreshToken", data.refreshToken);
-            window.location.href = "dashboard.html";
-        } else {
-            output.innerText = data.error;
-        }
-    } catch (err) {
-        console.error(err);
-        output.innerText = "Server not running";
-    }
+  } catch (err) {
+    output.innerText = "Server not running";
+  }
 });
 
+// Clear error on typing
+[emailInput, passwordInput].forEach(el => el.addEventListener("input", () => output.innerText = ""));
 
-// Clear output when user types again
-emailInput.addEventListener("input", () => output.innerText = "");
-passwordInput.addEventListener("input", () => output.innerText = "");
+// Google redirect tokens
+window.onload = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("token");
+  const refresh = urlParams.get("refresh");
+
+  if (token && refresh) {
+    localStorage.setItem("accessToken", token);
+    localStorage.setItem("refreshToken", refresh);
+    window.location.href = "dashboard.html";
+  }
+};
+
+async function refreshAccessToken() {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) return null;
+
+    try {
+        const res = await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/refresh", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            localStorage.setItem("accessToken", data.accessToken);
+            return data.accessToken;
+        } else {
+            console.warn(data.error);
+            return null;
+        }
+    } catch {
+        return null;
+    }
+}
