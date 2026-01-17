@@ -1,82 +1,55 @@
-import { authFetch } from "./authFetch.js";
+import React, { useEffect, useState } from "https://cdn.skypack.dev/react";
+import ReactDOM from "https://cdn.skypack.dev/react-dom";
 
-/* TAB SWITCH */
-function switchTab(tab) {
-document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-document.getElementById(tab+"-view").classList.add('active');
+function Dashboard() {
+  const [userEmail, setUserEmail] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
-event.currentTarget.classList.add('active');
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      window.location.href = "index.html";
+      return;
+    }
 
-document.getElementById("view-title").innerText = tab;
+    fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/me", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
+      .then((data) => {
+        setUserEmail(data.email);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Session expired. Please login again.");
+        setTimeout(() => (window.location.href = "index.html"), 2000);
+      });
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    window.location.href = "index.html";
+  };
+
+  if (loading) return <p>Loading dashboard...</p>;
+  if (error) return <p>{error}</p>;
+
+  return (
+    <div style={{ padding: "2rem", fontFamily: "Plus Jakarta Sans, sans-serif" }}>
+      <h1>Welcome to Geek</h1>
+      <p>Email: {userEmail}</p>
+      <button onClick={handleLogout} style={{ padding: "0.5rem 1rem", marginTop: "1rem" }}>
+        Logout
+      </button>
+    </div>
+  );
 }
-window.switchTab = switchTab;
 
-
-function goHome(){ switchTab('home'); }
-window.goHome = goHome;
-
-
-/* PROFILE IMAGE */
-function loadPhoto(e){
-const reader = new FileReader();
-reader.onload=()=>{
-document.getElementById("user-photo").src=reader.result;
-localStorage.setItem("pfp",reader.result);
-}
-reader.readAsDataURL(e.target.files[0]);
-}
-window.loadPhoto=loadPhoto;
-
-window.onload=()=>{
-const saved=localStorage.getItem("pfp");
-if(saved) document.getElementById("user-photo").src=saved;
-};
-
-
-/* AUTH CHECK */
-(async()=>{
-const res = await authFetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/me");
-
-if(!res.ok){
-localStorage.clear();
-location.href="index.html";
-return;
-}
-
-const user = await res.json();
-document.getElementById("userName").innerText = user.email.split("@")[0];
-document.getElementById("profileEmail").innerText = user.email;
-})();
-
-
-/* LOGOUT */
-document.getElementById("logoutBtn").onclick=async()=>{
-await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/logout",{
-method:"POST",
-headers:{ "Content-Type":"application/json"},
-body:JSON.stringify({ refreshToken:localStorage.getItem("refreshToken") })
-});
-localStorage.clear();
-location.href="index.html";
-};
-
-
-/* DELETE ACCOUNT */
-document.getElementById("deleteBtn").onclick=async()=>{
-
-const ok = confirm("Confirm delete?");
-if(!ok) return;
-
-const password = prompt("Enter password");
-if(!password) return;
-
-await authFetch ("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/delete",{
-method:"DELETE",
-body:JSON.stringify({password})
-});
-
-localStorage.clear();
-location.href="index.html";
-};
-
+ReactDOM.render(<Dashboard />, document.getElementById("dashboard-root"));
