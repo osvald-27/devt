@@ -16,7 +16,7 @@ loginBtn.addEventListener("click", async () => {
   }
 
   try {
-    const res = await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/login", {
+    const res = await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -57,7 +57,7 @@ async function refreshAccessToken() {
     if (!refreshToken) return null;
 
     try {
-        const res = await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/refresh", {
+        const res = await fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/auth/refresh", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refreshToken }),

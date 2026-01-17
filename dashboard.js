@@ -13,7 +13,7 @@ function Dashboard() {
       return;
     }
 
-    fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/me", {
+    fetch("https://tetchy-kaycee-nonlustrously.ngrok-free.dev/auth/me", {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     })

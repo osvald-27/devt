@@ -13,7 +13,7 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(requestLogger);
 
-app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 
 const rateLimit = require("express-rate-limit");
 const loginLimiter = rateLimit({
@@ -30,8 +30,8 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 
-app.use("/api/auth/login", loginLimiter);
-app.use("/api/auth/register", regLimiter);
+app.use("/auth/login", loginLimiter);
+app.use("/auth/register", regLimiter);
 
 
 const PORT = process.env.PORT || 3000;

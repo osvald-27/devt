@@ -14,7 +14,7 @@ if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "https://tetchy-kaycee-nonlustrously.ngrok-free.dev/api/auth/google/callback"
+    callbackURL: "https://tetchy-kaycee-nonlustrously.ngrok-free.dev/auth/google/callback"
 }, (accessToken, refreshToken, profile, done) => {
 
     if (!profile.emails || !profile.emails.length)
