@@ -43,7 +43,7 @@ function Dashboard() {
 
   return (
     <div style={{ padding: "2rem", fontFamily: "Plus Jakarta Sans, sans-serif" }}>
-      <h1>Welcome to Geek</h1>
+      <h1>Welcome to GeEk</h1>
       <p>Email: {userEmail}</p>
       <button onClick={handleLogout} style={{ padding: "0.5rem 1rem", marginTop: "1rem" }}>
         Logout
