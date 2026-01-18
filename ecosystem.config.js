@@ -1,5 +1,5 @@
 module.exports = {
-  apps : [{
+  apps: [{
     name: "backend-api",
     script: 'server.js',
     env: {
@@ -7,15 +7,15 @@ module.exports = {
     }
   }],
 
-  deploy : {
-    production : {
-      user : 'SSH_USERNAME',
-      host : 'SSH_HOSTMACHINE',
-      ref  : 'origin/master',
-      repo : 'GIT_REPOSITORY',
-      path : 'DESTINATION_PATH',
+  deploy: {
+    production: {
+      user: 'SSH_USERNAME',
+      host: 'SSH_HOSTMACHINE',
+      ref: 'origin/By devt',
+      repo: 'GIT_REPOSITORY',
+      path: 'DESTINATION_PATH',
       'pre-deploy-local': '',
-      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
+      'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production',
       'pre-setup': ''
     }
   }
