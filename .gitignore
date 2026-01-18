@@ -1,2 +1,7 @@
 .env
 node_modules/
+<<<<<<< HEAD
+=======
+hello-ngrok/
+build/
+>>>>>>> a640273afc49d8f5c0bacb18c69c24c6002c4baf
