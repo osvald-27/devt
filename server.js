@@ -3,18 +3,33 @@ const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./auth");
 const bodyParser = require("body-parser");
-const requestLogger = require("passport-google-oauth20");
+const requestLogger = require("./requestLogger");
+const authMiddleware = require("./authMiddleware");
+const path = require("path");
 const app = express();
+
+
 app.use(express.json());
 app.use(cors({
     origin: "*", 
     credentials: true
 }));
 app.use(bodyParser.json());
+
+app.use("/dashboard", express.static(path.join("dashboard/build")));
+app.get("/dashboard", (req, res) => {
+    res.sendFile(path.join("dashboard/build", "index.html"));
+});
+
+app.use("/api/auth", authRoutes);
+app.use("/me", authMiddleware, async(req, res) => {
+    res.json({ 
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email
+     });
+});
 app.use(requestLogger);
-
-app.use("/auth", authRoutes);
-
 const rateLimit = require("express-rate-limit");
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -30,7 +45,7 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 
-app.use("/auth/login", loginLimiter);
+app.use("/api/auth/login", loginLimiter);
 app.use("/auth/register", regLimiter);
 
 
