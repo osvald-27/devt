@@ -6,11 +6,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     // Fetch user info from /me API
-    fetch("/me", {
-      credentials: "include", // send cookies if you use sessions
+    const token = localStorage.getItem("accessToken");
+    fetch("http://localhost:3000/me", {
       headers: {
         "Content-Type": "application/json",
-        // "Authorization": `Bearer ${token}` // if using JWT
+        "Authorization": `Bearer ${token}`
       },
     })
       .then((res) => {
@@ -25,10 +25,15 @@ const Dashboard = () => {
   }, []);
 
   const handleLogout = () => {
-    fetch("/logout", {
+    const token = localStorage.getItem("accessToken");
+    fetch("http://localhost:3000/api/auth/logout", {
       method: "POST",
-      credentials: "include",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
     }).then(() => {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       window.location.href = "/login";
     });
   };

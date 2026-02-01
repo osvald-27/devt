@@ -26,7 +26,7 @@ signupBtn.addEventListener("click", async () => {
 
     if (res.ok) {
       output.innerText = "Account created! Redirecting...";
-      setTimeout(() => window.location.href = "login.html", 2000);
+      setTimeout(() => window.location.href = "index.html", 2000);
     } else {
       output.innerText = data.error || "Registration failed";
     }

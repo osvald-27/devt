@@ -16,11 +16,6 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
-app.use("/dashboard", express.static(path.join("dashboard/build")));
-app.get("/dashboard", (req, res) => {
-    res.sendFile(path.join("dashboard/build", "index.html"));
-});
-
 app.use("/api/auth", authRoutes);
 app.use("/me", authMiddleware, async (req, res) => {
     res.json({
@@ -29,6 +24,12 @@ app.use("/me", authMiddleware, async (req, res) => {
         email: req.user.email
     });
 });
+
+app.use(express.static(path.join(__dirname, "dashboard/build")));
+app.get(/^\/.*/, (req, res) => {
+    res.sendFile(path.join(__dirname, "dashboard", "build", "index.html"));
+});
+
 app.use(requestLogger);
 const rateLimit = require("express-rate-limit");
 const loginLimiter = rateLimit({
@@ -46,7 +47,7 @@ app.use(cookieParser());
 
 
 app.use("/api/auth/login", loginLimiter);
-app.use("/auth/register", regLimiter);
+app.use("/api/auth/register", regLimiter);
 
 
 const PORT = process.env.PORT || 3000;
