@@ -33,6 +33,7 @@
     "pm2": "^6.0.14"
   },
   "devDependencies": {
+    "jest": "^30.2.0",
     "nodemon": "^3.1.11"
   },
   "lockfileVersion": 3,
