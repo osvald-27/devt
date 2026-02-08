@@ -1,0 +1,31 @@
+services:
+  # 1. THE DATABASE
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: myapp
+      MYSQL_ROOT_PASSWORD: mawoh
+    ports:
+      - "3306:3306"
+
+  # 2. THE BACKEND
+  backend:
+    build: ./backend  # Points to your backend folder
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASS: mawoh
+      DB_NAME: myapp
+    depends_on:
+      - db
+
+  # 3. THE FRONTEND
+  frontend:
+    build: ./frontend # Points to your frontend folder
+    ports:
+      - "5173:5173"   # Or 3000 depending on your React setup
+    stdin_open: true  # Keeps React interactive
+    tty: true
